@@ -1,18 +1,18 @@
 {
-  "name": "random-student",
+  "name": "random-student-picker",
   "type": "module",
   "version": "0.0.1",
   "description": "Random Student Picker",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zhangyx1998/random-student.git"
+    "url": "https://github.com/zhangyx1998/random-student-picker.git"
   },
   "author": "Yuxuan Zhang",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/zhangyx1998/random-student/issues"
+    "url": "https://github.com/zhangyx1998/random-student-picker/issues"
   },
-  "homepage": "https://github.com/zhangyx1998/random-student#README",
+  "homepage": "https://github.com/zhangyx1998/random-student-picker#README",
   "devDependencies": {
     "eslint": "^8.47.0",
     "eslint-plugin-vue": "^9.17.0",
