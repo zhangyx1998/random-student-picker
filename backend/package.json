@@ -1,0 +1,20 @@
+{
+    "type": "module",
+    "description": "Random Student Backend Server",
+    "main": "index.js",
+    "author": "Yuxuan Zhang",
+    "license": "MIT",
+    "dependencies": {
+        "api": "file:./api",
+        "argparse": "^2.0.1",
+        "body-parser": "^1.20.2",
+        "colors": "^1.4.0",
+        "cookie-parser": "^1.4.6",
+        "csv-parse": "^5.4.0",
+        "express": "^4.18.2",
+        "lib": "file:./lib",
+        "winston": "^3.10.0",
+        "ws": "^8.13.0",
+        "yaml": "^2.3.1"
+    }
+}
