@@ -1,0 +1,11 @@
+{
+    "type": "module",
+    "description": "Random Student Command Line Utilities",
+    "author": "Yuxuan Zhang",
+    "license": "MIT",
+    "dependencies": {
+        "argparse": "^2.0.1",
+        "csv-parse": "^5.4.0",
+        "yaml": "^2.3.1"
+    }
+}
