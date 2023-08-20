@@ -40,7 +40,7 @@
 <script>
 import { defineComponent, ref, watch } from 'vue';
 import { login } from '@/api/app';
-const component = defineComponent({
+export default defineComponent({
     setup() {
         const password = ref(''), err = ref(false);
         watch(password, val => {
@@ -71,9 +71,6 @@ const component = defineComponent({
         }
     }
 });
-// Export Window Launcher
-import Win from '@win';
-export const loginWindow = Win(component, 'Login Required', false, {});
 </script>
 
 <style scoped lang="scss">

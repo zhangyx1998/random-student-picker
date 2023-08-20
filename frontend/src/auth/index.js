@@ -1,9 +1,11 @@
 import { ref, watch } from 'vue';
-import { alert } from '@win';
+import Win, { alert } from '@win';
 import AuthManager from './AuthManager.vue';
-import { loginWindow } from './LoginWindow.vue';
+import LoginWindow from './LoginWindow.vue';
 
-export const auth = ref(undefined);
+export const
+    auth = ref(undefined),
+    loginWindow = Win(LoginWindow, 'Login Required', false, {});
 
 watch(auth, async (val, prev) => {
     if (val instanceof Error) {
