@@ -3,8 +3,8 @@
 # =========================================================
 # Makefile: https://www.gnu.org/software/make/manual/make.html
 # Preset parameters
-SERVER_PORT ?= 8080
-SERVER_VAR  ?= $(PWD)/var
+SRV_PORT ?= 8080
+SRV_VAR  ?= $(PWD)/var
 # Help message
 help:
 	@echo \
@@ -12,9 +12,8 @@ help:
 	"\n" \
 	"\n  help             show this message (default target)" \
 	"\n" \
-	"\n  preview          build frontend and start server" \
-	"\n" \
 	"\n  frontend         build frontend for distribution" \
+	"\n  frontend.debug   build frontend in debug mode" \
 	"\n  frontend.dev     start frontend dev server" \
 	"\n" \
 	"\n  backend          start backend server for development" \
@@ -26,27 +25,42 @@ help:
 	"\n                   (This command takes input from stdin)" \
 	"\n  convert.demo     Convert demo/students.csv for demostration." \
 	"\n" \
+	"Common combinations:" \
+	"\n" \
+	"\n  To run " \
+	"\n" \
 	"\n  Author: Yuxuan Zhang" \
 	"\n"
 
-preview: frontend backend
+# Git Related
+git.sync:
+	@if [ -z "$(git status --porcelain)" ]; then \
+		echo "[GIT] Checking updates from remote ..."; \
+		git pull > /dev/null; \
+		git submodule update --init --recursive > /dev/null; \
+	else \
+		echo "Git repository is dirty. Skipping git pull"; \
+	fi
 
 # Frontend Related
-frontend.init:
-	@git submodule update --init --recursive > /dev/null
-	@cd frontend && npm install > /dev/null
+BUILD_FLAGS  ?= 
+BUILD_FLAGS  += --emptyOutDir --outDir $(SRV_VAR)/static
 
-frontend.dev: frontend.init
-	@cd frontend && \
-	PROXY="http://localhost:$(SERVER_PORT)" \
-	npx vite dev
+frontend.init: git.sync
+	@cd frontend && npm install > /dev/null
 
 frontend: frontend.init
 	$(info Building frontend distribution...)
 	@cd frontend && \
-	npx vite build \
-	--emptyOutDir \
-	--outDir $(SERVER_VAR)/static > /dev/null 
+	npx vite build $(BUILD_FLAGS) > /dev/null 
+
+frontend.debug: BUILD_FLAGS += --minify false
+frontend.debug: frontend
+
+frontend.dev: frontend.init
+	@cd frontend && \
+	PROXY="http://localhost:$(SRV_PORT)" \
+	npx vite dev
 
 # Backend Related
 backend.init:
@@ -62,7 +76,7 @@ backend.start: backend.install
 
 # Run backend server on this terminal
 backend: backend.init
-	@ PORT=$(SERVER_PORT) VAR_PATH=$(SERVER_VAR) \
+	@ PORT=$(SRV_PORT) VAR_PATH=$(SRV_VAR) \
 	node backend/index.js
 
 # Optional attiaional make scripts
