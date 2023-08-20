@@ -1,6 +1,8 @@
+DEMO_CSV := scripts/demo-students.csv
 demo.convert:
 	@$(MAKE) --no-print-directory \
-	convert < scripts/demo-students.csv
+	convert < $(DEMO_CSV)
+	@echo "Student list generated using $(DEMO_CSV)"
 
 demo.password:
 	@mkdir -p $(SRV_VAR)
