@@ -12,6 +12,8 @@ help:
 	"\n" \
 	"\n  help             show this message (default target)" \
 	"\n" \
+	"\n  preview          build frontend and start server" \
+	"\n" \
 	"\n  frontend         build frontend for distribution" \
 	"\n  frontend.dev     start frontend dev server" \
 	"\n" \
@@ -23,6 +25,8 @@ help:
 	"\n  Author: Yuxuan Zhang" \
 	"\n"
 
+preview: frontend backend
+
 # Frontend Related
 frontend.init:
 	@cd frontend && npm install > /dev/null
@@ -33,9 +37,10 @@ frontend.dev: frontend.init
 	npx vite dev
 
 frontend: frontend.init
+	$(info Building frontend distribution...)
 	@cd frontend && \
 	npx vite build \
-	--outDir $(SERVER_VAR)/static
+	--outDir $(SERVER_VAR)/static > /dev/null
 
 # Backend Related
 backend.init:
