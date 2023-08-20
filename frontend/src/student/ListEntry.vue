@@ -1,17 +1,26 @@
 <script setup>
 import Stat from './Stat.vue';
-const props = defineProps({
-    stat: {
-        type: Array,
-        default: () => [0, 0]
-    }
-});
+import { viewStudent } from './Prompt.vue';
+const
+    props = defineProps({
+        sid: {
+            type: String,
+            default: ''
+        },
+        stat: {
+            type: Array,
+            default: undefined
+        }
+    }),
+    emit = defineEmits(['updated']);
+
 </script>
 
 <template>
     <btn
-        class="subject-entry"
+        class="student-entry"
         type="seamless gray"
+        @click="viewStudent(sid).then(() => emit('updated'))"
     >
         <span class="name">
             <slot></slot>
@@ -20,22 +29,25 @@ const props = defineProps({
             :total="stat?.[0] ?? 0"
             :credit="stat?.[1] ?? 0"
             style="width: 1.5em"
+            :style="{ opacity: stat ? 1 : 0 }"
         />
     </btn>
 </template>
 
 <style lang="scss" scoped>
-.subject-entry {
+.student-entry {
     --wb: 1px;
     border-radius: 5px;
     border-color: var(--cb-gray-light);
+    flex-grow: 1;
 
     &:hover {
         border-color: var(--cb-gray-dark) !important;
     }
 
     &> :deep(span) {
-        width: 14em;
+        min-width: 14em;
+        flex-grow: 1;
         display: flex;
         justify-content: space-between;
         align-items: center;

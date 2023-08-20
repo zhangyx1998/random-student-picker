@@ -5,8 +5,8 @@ const
     backendAPIs = [
         '/auth',
         '/random',
-        '/students',
-        '/requests',
+        '/student/',
+        '/record/',
         '/log',
     ],
     backendServer = process.env.PROXY ?? 'http://localhost:8080';

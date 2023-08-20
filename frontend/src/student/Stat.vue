@@ -66,6 +66,7 @@ function circleStyle(value, total, offset = 0) {
             :style="circleStyle(skipped, total, credit)"
         />
         <text
+            monospace
             dominant-baseline="central"
             x="50%"
             y="50%"
@@ -110,7 +111,6 @@ svg {
 
     text {
         font-size: 24px;
-        font-family: 'Cascadia Code', 'Cascadia', 'Courier New', Courier, monospace;
         text-anchor: middle;
     }
 }

@@ -4,6 +4,7 @@
             <input
                 ref="passwordInput"
                 v-model="password"
+                monospace
                 type="password"
                 name="password"
                 autocomplete="current-password"
@@ -38,7 +39,7 @@
 
 <script>
 import { defineComponent, ref, watch } from 'vue';
-import { login as loginAPI } from '@/src/api';
+import { login as loginAPI } from '@/api/app';
 import Win from '@win';
 const component = defineComponent({
     setup() {
@@ -99,7 +100,6 @@ export const login = Win(component, 'Login Required', false, {});
 
     input {
         z-index: -2;
-        font-family: 'Cascadia Code', Courier, monospace;
         border: none;
         outline: none;
         padding: 0.5em 4em 0.5em 1em;

@@ -1,9 +1,8 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref } from 'vue';
 import { alert } from '@win';
-import { randResult } from './components/RandResult.vue';
-
-import { createRandRecord } from '@/src/api';
+import { viewRecord } from './record/Prompt.vue';
+import { createRandomRecord } from '@/api/record';
 const flag_active = ref(false);
 
 async function show(token) {
@@ -12,7 +11,7 @@ async function show(token) {
         location.hash = token;
     }
     // Show RandResult
-    const regenerate = await randResult(token);
+    const regenerate = await viewRecord(token, true);
     // Clear hash
     location.hash = '';
     // Unset flag_active
@@ -28,7 +27,7 @@ async function click() {
     if (flag_active.value) return;
     flag_active.value = true;
     await new Promise(res => setTimeout(res, 1200));
-    const res = await createRandRecord();
+    const res = await createRandomRecord();
     if (res instanceof Error) {
         alert.title('Error')(res);
     } else {

@@ -13,6 +13,7 @@
                 <div
                     v-if="filter(log)"
                     log
+                    monospace
                     :class="[log.src, log.level]"
                 >
                     <div
@@ -52,7 +53,8 @@
         </btn>
         <select
             v-model="filterLevel"
-            style="border-radius: 0.66em; font-family: 'Cascadia Code', Courier, monospace; border: 1px solid var(--ct-gray-dark); color: var(--ct-gray-dark)"
+            monospace
+            style="border-radius: 0.66em; border: 1px solid var(--ct-gray-dark); color: var(--ct-gray-dark)"
         >
             <option
                 v-for="[key, val] in options"
@@ -68,7 +70,7 @@
 <script>
 import { defineComponent, ref, watch } from 'vue';
 import dt from 'date-and-time';
-import { auth } from '@/src/components/AuthManager.vue';
+import { auth } from '@/src/auth';
 // Websocket URL
 const URL = `ws://${location.host}/log`;
 // Variables
@@ -112,7 +114,7 @@ function pushLog(event) {
 }
 function connectWS() {
     return new Promise(retry => {
-        if (auth.value !== 'OK') return setTimeout(retry, 1000);
+        if (auth.value !== 'SERVER') return setTimeout(retry, 1000);
         const ws = new WebSocket(URL);
         ws.addEventListener('message', pushLog);
         ws.addEventListener('open', () => wsAlive.value = true);
@@ -190,7 +192,6 @@ div[log-viewer] {
   align-items: left;
 
   div[log] {
-    font-family: 'Cascadia Code', monospace;
     display: flex;
     flex-direction: row;
     justify-content: left;

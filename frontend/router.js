@@ -9,13 +9,17 @@ export const routes = [
         component: () => import('./src/Home.vue'),
         meta: { title: 'Random Picker' },
     }, {
-        path: '/manage',
-        component: () => import('./src/Manage.vue'),
-        meta: { title: 'Manage | Random Picker' },
+        path: '/students',
+        component: () => import('./src/Students.vue'),
+        meta: { title: 'Students | Random Picker' },
     }, {
-        path: '/history',
-        component: () => import('./src/History.vue'),
-        meta: { title: 'History | Random Picker' },
+        path: '/records',
+        component: () => import('./src/Records.vue'),
+        meta: { title: 'Records | Random Picker' },
+    }, {
+        path: '/settings',
+        component: () => import('./src/Settings.vue'),
+        meta: { title: 'Settings | Random Picker' },
     }, {
         path: '/:code',
         meta: {
@@ -25,7 +29,7 @@ export const routes = [
          */
             title: to => `${/^\d+$/g.test(to.params.code) && to.params.code || '404'} | Random Picker`
         },
-        component: () => import('./src/status.vue')
+        component: () => import('./src/Status.vue')
     }
 ];
 

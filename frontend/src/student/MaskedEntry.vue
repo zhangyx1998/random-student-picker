@@ -14,7 +14,7 @@ const toggle = ref(false);
         <div class="name">
             {{ name }}
         </div>
-        <div class="value">
+        <div class="mono value">
             <span v-if="toggle">
                 <slot></slot>
             </span>
@@ -69,7 +69,6 @@ const toggle = ref(false);
         text-overflow: ellipsis;
         white-space: nowrap;
         margin: 0 1em;
-        font-family: 'Cascadia Code', 'Cascadia', 'Courier New', Courier, monospace;
     }
 
     .button {

@@ -33,7 +33,9 @@
                     color: var(--ct-gray-light);
                 "
                 >
-                    Record last updated at {{ lastUpdated }}
+                    <span v-if="record?.manual">Manually</span>
+                    <span v-else>Randomly</span>
+                    picked at {{ timeCreated }}
                 </div>
             </container>
             <student-stat
@@ -89,14 +91,17 @@
                 style="flex-grow: 1;"
                 :pad="false"
             >
-                <div class="text-group">
+                <div
+                    class="text-group"
+                    style="height: 1em"
+                >
                     <span class="y">Credit Received</span>
                     <span class="n">Not Credited</span>
                 </div>
                 <btn
                     v-if="!credited"
                     class="credit-button"
-                    type="solid brand"
+                    type="solid blue"
                     @click="credited = true"
                 >
                     <i
@@ -127,8 +132,15 @@
             @blur="timeoutUpdateServerRecord.force"
             @keydown.enter="timeoutUpdateServerRecord.force"
         ></textarea>
+        <div
+            monospace
+            style="font-size: 0.7em; color: var(--ct-gray); user-select: none; margin-bottom: .5em; text-align: center;"
+        >
+            CHANGES WILL BE SAVED AUTOMATICALLY
+        </div>
         <!-- Refresh button -->
         <div
+            v-if="regenerate"
             btn-group
             compact
         >
@@ -148,16 +160,18 @@
                 class="fa fa-info-circle"
                 style="width: 1em; margin: 0 0.5em 0 -1.5em;"
             ></i>This
-            record has been saved on the server.
-            It will be counted into
+            record will be counted into
             <span class="name"><student-name :name="info?.name" />'s</span>
             participation record.
-            If you didn't intend for this, you can manually <btn
-                type="link"
-                style="color: var(--ct-blue); padding: 0 0.2em;"
+            If you didn't intend for this, you can <btn
+                type="seamless"
+                style="padding: 0 0.3em; margin: 0; display: inline-block;"
                 @click="deleteRecord"
             >
-                delete
+                <i class="fa fa-trash"></i>
+                <span style="text-decoration: underline; margin-left: 0.2em;">
+                    delete
+                </span>
             </btn> this record.
         </div>
     </div>
@@ -166,36 +180,38 @@
 <script>
 import { defineComponent, ref } from 'vue';
 // Components
-import StudentStat from './student/Stat.vue';
-import StudentName from './student/Name.vue';
-import StudentMeta from './student/Meta.vue';
+import StudentStat from '../student/Stat.vue';
+import StudentName from '../student/Name.vue';
+import StudentMeta from '../student/Meta.vue';
 // Common Utilities
 import Timeout from '@CL/timeout';
 // Utility APIs
 import { alert, confirm } from '@win';
-import { getRandRecord, setRandRecord, deleteRandRecord, getStudentInfo } from '@/src/api';
+import { getRecord, updateRecord, deleteRecord } from '@/api/record';
+import { getStudentInfo } from '@/api/student';
 // Component Export
 const Component = defineComponent({
     components: {
         StudentStat, StudentName, StudentMeta
     },
-    setup(token) {
-        const comment = ref(), credited = ref(), flag_loading = ref(true);
+    setup(token, regenerate = false) {
         return {
             token,
-            comment,
-            credited,
-            flag_loading,
+            regenerate,
+            comment: ref(),
+            credited: ref(),
             timeout: undefined,
+            firstLoad: ref(true),
+            record: ref({}),
             info: ref(null),
-            rec: ref(null),
             toggle: ref(false),
         };
     },
     computed: {
-        lastUpdated() {
-            if (this.rec?.timestamp) {
-                const date = new Date(this.rec.timestamp);
+        timeCreated() {
+            const { timestamp } = this.record;
+            if (timestamp !== undefined) {
+                const date = new Date(timestamp);
                 return date.toLocaleString();
             } else {
                 return 'N/A';
@@ -203,13 +219,13 @@ const Component = defineComponent({
         }
     },
     watch: {
-        credited() { if (!this.flag_loading) this.timeoutUpdateServerRecord.force(); },
-        comment() { if (!this.flag_loading) this.timeoutUpdateServerRecord(); }
+        credited() { if (!this.firstLoad) this.timeoutUpdateServerRecord.force(); },
+        comment() { if (!this.firstLoad) this.timeoutUpdateServerRecord(); }
     },
     async mounted() {
         this.timeoutUpdateServerRecord = Timeout(() => this.updateServerRecord(), 1000);
         await this.updateClientContent();
-        this.flag_loading = false;
+        this.firstLoad = false;
     },
     methods: {
         async deleteRecord() {
@@ -221,14 +237,14 @@ const Component = defineComponent({
                 );
             if (ack) {
                 await this.LOAD(
-                    deleteRandRecord(this.token).then(r => { if (r instanceof Error) throw r; })
+                    deleteRecord(this.token).then(r => { if (r instanceof Error) throw r; })
                 );
                 this.RETURN();
             }
         },
         async updateClientContent() {
             const request = async () => {
-                const rec = await getRandRecord(this.token);
+                const rec = await getRecord(this.token);
                 if (rec instanceof Error) throw rec;
                 const info = await getStudentInfo(rec.sid);
                 if (info instanceof Error) throw info;
@@ -241,14 +257,15 @@ const Component = defineComponent({
             });
             // Update client content
             this.info = info;
-            if (this.flag_loading) {
-                const { credited = false, comment = '' } = rec;
+            if (this.firstLoad) {
+                const { credited = false, comment = '', ...record } = rec;
                 this.credited = credited;
                 this.comment = comment;
+                this.record = record;
             }
         },
         async updateServerRecord(force = false) {
-            const res = await setRandRecord(this.token, {
+            const res = await updateRecord(this.token, {
                 comment: this.comment,
                 credited: this.credited,
             });
@@ -260,12 +277,14 @@ const Component = defineComponent({
 });
 export default Component;
 import Window from '@win';
-export const randResult = Window(Component, 'Random Result');
+export const viewRecord = Window(Component, 'Random Result');
 </script>
 
 <style lang="scss" scoped>
 [frame-prompt] {
-    width: min(80vw, 520px);
+    @media (min-width: 721px) {
+        width: min(80vw, 520px);
+    }
 }
 
 .foot-note {
@@ -317,7 +336,7 @@ export const randResult = Window(Component, 'Random Result');
     }
 
     &.credited>* {
-        color: var(--c-brand);
+        color: var(--ct-blue);
     }
 }
 
@@ -327,7 +346,7 @@ export const randResult = Window(Component, 'Random Result');
     transform-style: preserve-3d;
 
     &.y {
-        color: var(--c-brand);
+        color: var(--ct-blue);
         transform: rotate3D(10, 0, 0, -90deg);
         opacity: 0;
     }
@@ -366,7 +385,7 @@ textarea {
         outline: solid 1px var(--c-brand);
     }
 
-    margin-bottom: 1em;
+    margin-bottom: .5em;
 }
 
 .foldable {
