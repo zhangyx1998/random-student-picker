@@ -1,41 +1,27 @@
 import express from 'express';
 // Custom modules
-import { util, students, requests, FileDB, logger } from 'lib';
-/**
- * Create a new request object.
- * @param {string} sid Student ID
- * @param {*} args Additional arguments
- * @returns {{
- *  sid: string,
- *  timestamp: number,
- *  manual: boolean,
- *  credit: boolean,
- *  comment: string,
- *  ...args
- * }}
- */
-export function newRequest(sid, args = {}) {
-    return {
-        sid,
-        timestamp: Date.now(),
-        manual: false,
-        credit: false,
-        comment: '',
-        ...args
-    };
-}
+import { util, FileDB, db, logger } from 'lib';
+import { Record } from 'api/record.js';
 /**
  * @param {express.Request} req
  * @param {express.Response} res
  */
-function createRandomSession(req, res) {
+function createRandomRecord(req, res) {
     const
         params = typeof req.body === 'object' ? req.body : {},
         { weighted = true, exclude = [] } = params,
-        pool = Object.fromEntries(FileDB.keys(students).map(sid => [sid, 1]));
+        pool = Object.fromEntries(
+            FileDB
+                .keys(db.student)
+                .map(sid => [sid, 1])
+        );
+    // Check if pool is empty
+    if (Object.keys(pool).length === 0) {
+        return res.status(404).text('No student on file');
+    }
     // Accumulate request history
     if (weighted) {
-        for (const [token, { sid }] of FileDB.iter(requests)) {
+        for (const [token, { sid }] of FileDB.iter(db.record)) {
             if (sid in pool) pool[sid] += 1;
             else logger.warn(`Invalid sid '${sid}' in request <${token}>`);
         }
@@ -44,6 +30,11 @@ function createRandomSession(req, res) {
     for (const sid of exclude) {
         if (sid in pool) delete pool[sid];
         else logger.warn(`Invalid sid '${sid}' in exclude list`);
+    }
+    // Check if pool is empty
+    if (Object.keys(pool).length === 0) {
+        // Bad request
+        return res.status(400).text('Bad request: All students excluded');
     }
     // Allocate weights
     if (weighted) {
@@ -62,95 +53,13 @@ function createRandomSession(req, res) {
     for (const sid of Object.keys(pool).sort()) {
         acc += pool[sid];
         if (acc >= pick) {
-            const
-                insert = FileDB.insert(requests),
-                token = insert(newRequest(sid));
+            const token = FileDB.insert(
+                db.record,
+                Record(sid)
+            );
             logger.info(`New random request <${token}> created for sid:${sid}`);
             return res.text(token);
         }
     }
 }
-/**
- * @param {express.Request} req
- * @param {express.Response} res
- */
-function insertManualSession(req, res) {
-    // Extract request body
-    const content = req.body;
-    if (typeof content !== 'object') {
-        return res.status(400).text('Invalid request body');
-    }
-    // Extract and validate sid from request body
-    const { sid, ...args } = content;
-    if (typeof sid !== 'string' || !(sid in students)) {
-        return res.status(400).text('Invalid sid');
-    }
-    // Insert request into FileDB
-    const
-        insert = FileDB.insert(requests),
-        token = insert(newRequest(sid, { manual: true, ...args }));
-    logger.info(`New manual request <${token}> created for sid:${sid}`);
-    return res.text(token);
-}
-/**
- * Extract and validate token in given request
- * @param {express.Request} req
- * @returns
- */
-function extractToken(req, res) {
-    const { token } = req.params;
-    if (token && typeof token === 'string' && token in requests) return token;
-    else res.status(404).text('Invalid token');
-}
-/**
- * @param {express.Request} req
- * @param {express.Response} res
- */
-function getRandomSession(req, res) {
-    const token = extractToken(req, res);
-    if (!token) return;
-    res.json(requests[token]);
-}
-/**
- * @param {express.Request} req
- * @param {express.Response} res
- */
-function updateRandomSession(req, res) {
-    const token = extractToken(req, res);
-    if (!token) return;
-    // Extract request body
-    const content = req.body;
-    if (typeof content !== 'object') {
-        return res.status(400).text('Invalid request body');
-    }
-    // Update request in FileDB
-    requests[token] = Object.assign(requests[token], content);
-    // Log update
-    logger.info(`Request <${token}> updated, fields modified: ${Object.keys(content).join(', ')}`);
-    // Respond OK
-    res.status(200).end();
-}
-/**
- * @param {express.Request} req
- * @param {express.Response} res
- */
-function deleteRandomSession(req, res) {
-    const token = extractToken(req, res);
-    if (!token) return;
-    // Perform deletion
-    delete requests[token];
-    // Log deletion
-    logger.info(`Request <${token}> deleted`);
-    // Respond OK
-    res.status(200).end();
-}
-
-
-export default express()
-    // Session creation
-    .get('/random', createRandomSession)
-    .post('/random', insertManualSession)
-    // Session management
-    .get('/random/:token', getRandomSession)
-    .post('/random/:token', updateRandomSession)
-    .delete('/random/:token', deleteRandomSession);
+export default express().get('/random', createRandomRecord);

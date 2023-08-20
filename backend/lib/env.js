@@ -14,10 +14,11 @@ export const path = {
     log: resolve(VAR, 'log'),
     static: resolve(VAR, 'static'),
     password: resolve(VAR, 'password'),
-    requests: resolve(VAR, 'requests'),
+    // FileDB directories
+    records: resolve(VAR, 'records'),
     students: resolve(VAR, 'students'),
 };
 
 await mkdir(VAR, { recursive: true });
-await mkdir(path.requests, { recursive: true });
+await mkdir(path.records, { recursive: true });
 await mkdir(path.students, { recursive: true });

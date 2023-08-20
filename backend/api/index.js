@@ -3,7 +3,8 @@ import CookieParser from 'cookie-parser';
 import BodyParser from 'body-parser';
 import { env } from 'lib';
 import authServer, { auth } from './auth.js';
-import manageServer from './manage.js';
+import studentServer from './student.js';
+import recordServer from './record.js';
 import randomServer from './random.js';
 export const cookieParser = CookieParser();
 // Patch express.response with a text() method
@@ -23,6 +24,7 @@ export default express()
     .use(cookieParser, BodyParser.json(), BodyParser.text())
     .use(authServer)
     .use(auth(randomServer))
-    .use(auth(manageServer))
+    .use(auth(recordServer))
+    .use(auth(studentServer))
     // Unmatched routes are redirected to static assets.
     .use(express.static(env.path.static, { pwa: true }));

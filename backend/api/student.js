@@ -1,6 +1,6 @@
 import express from 'express';
 // Custom modules
-import { util, logger, students, requests, FileDB } from 'lib';
+import { util, logger, FileDB, db } from 'lib';
 // API Callbacks
 /**
  * Formulate list of all students,
@@ -11,10 +11,10 @@ import { util, logger, students, requests, FileDB } from 'lib';
 export async function getStudentList(req, res) {
     // Build participation statistics using all records
     const index = {};
-    for (const [token, content] of FileDB.iter(requests)) {
+    for (const [token, content] of FileDB.iter(db.record)) {
         const { sid, credited = false } = content;
         // Validate type and existence of given sid
-        if (typeof sid !== 'string' || !(sid in students)) {
+        if (typeof sid !== 'string' || !(sid in db.student)) {
             logger.warn(`Invalid sid '${sid}' in request <${token}>`);
         }
         // Create index for sid if not exists
@@ -27,7 +27,7 @@ export async function getStudentList(req, res) {
     }
     // Compose final list
     const result = Object.fromEntries(
-        [...FileDB.iter(students)]
+        [...FileDB.iter(db.student)]
             .map(([sid, { name }]) => [
                 sid, {
                     name,
@@ -50,14 +50,17 @@ async function getStudentSummary(req, res) {
         return res.status(400).end('Invalid sid');
     }
     // Check if sid exists
-    if (!(sid in students)) {
+    if (!(sid in db.student)) {
         return res.status(404).end('Student not found');
     }
     // Get student info
-    const student = students[sid];
+    const student = db.student[sid];
     // Get participation record
     const
-        record = FileDB.iter(requests, (k, v) => v?.sid === sid),
+        record = FileDB.iter(
+            db.record,
+            (k, v) => v?.sid === sid
+        ),
         stat = [0, 0];
     // Compute statistics
     for (const [_, request] of record) {
@@ -75,5 +78,5 @@ async function getStudentSummary(req, res) {
 }
 
 export default express()
-    .get('/students', util.no_cache, util.wrap(getStudentList))
-    .get('/students/:sid', util.no_cache, util.wrap(getStudentSummary));
+    .get('/student/', util.no_cache, util.wrap(getStudentList))
+    .get('/student/:sid', util.no_cache, util.wrap(getStudentSummary));
