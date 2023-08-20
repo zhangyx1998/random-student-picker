@@ -5,23 +5,41 @@
 # Preset parameters
 SERVER_PORT ?= 8080
 SERVER_VAR  ?= $(PWD)/var
-# Optional attiaional make scripts
-include scripts/*.mk
+# Help message
+help:
+	@echo \
+	"Make targets:" \
+	"\n" \
+	"\n  help             show this message (default target)" \
+	"\n" \
+	"\n  frontend         build frontend for distribution" \
+	"\n  frontend.dev     start frontend dev server" \
+	"\n" \
+	"\n  backend          start backend server for development" \
+	"\n  backend.install  install backend as a systemd service" \
+	"\n  backend.start    start backend service (systemd)" \
+	"\n  backend.stop     stop backend service (systemd)" \
+	"\n" \
+	"\n  Author: Yuxuan Zhang" \
+	"\n"
+
 # Frontend Related
 frontend.init:
-	cd frontend && npm install
+	@cd frontend && npm install > /dev/null
 
 frontend.dev: frontend.init
-	cd frontend && \
+	@cd frontend && \
 	PROXY="http://localhost:$(SERVER_PORT)" \
 	npx vite dev
 
 frontend: frontend.init
-	cd frontend && npx vite build --outDir $(SERVER_VAR)/static
+	@cd frontend && \
+	npx vite build \
+	--outDir $(SERVER_VAR)/static
 
 # Backend Related
 backend.init:
-	cd backend && npm install
+	@cd backend && npm install > /dev/null
 
 # Install backend server as a systemd service
 backend.install: backend.init
@@ -35,3 +53,6 @@ backend.start: backend.install
 backend: backend.init
 	@ PORT=$(SERVER_PORT) VAR_PATH=$(SERVER_VAR) \
 	node backend/index.js
+
+# Optional attiaional make scripts
+include scripts/*.mk
