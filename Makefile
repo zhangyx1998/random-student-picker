@@ -23,14 +23,11 @@ help:
 	"\n" \
 	"\n  convert          Convert csv file into student list." \
 	"\n                   (This command takes input from stdin)" \
-	"\n  convert.demo     Convert demo/students.csv for demostration." \
 	"\n" \
-	"Common combinations:" \
+	"\n  demo             Converts demo-students.csv for demostration." \
+	"\n                   Also generates random password for login." \
 	"\n" \
-	"\n  To run " \
-	"\n" \
-	"\n  Author: Yuxuan Zhang" \
-	"\n"
+	"\nAuthor: Yuxuan Zhang"
 
 # Git Related
 git.sync:

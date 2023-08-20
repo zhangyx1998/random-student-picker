@@ -29,31 +29,25 @@ if (out_dir) {
     await mkdir(out_dir, { recursive: true });
 }
 // Process CSV from stdin
-const csv = CSV();
+const csv = CSV({ columns: true, skip_empty_lines: true, trim: true });
 stdin.pipe(csv);
 // Use the readable stream api to consume records
-let header;
 csv.on('readable', () => {
-    if (!header) {
-        header = csv.read();
-        if (!header.includes(primary_name)) {
-            throw new Error(`Primary key" ${primary_name}" not found in header ${header}}`);
-        }
-    }
     const hashPool = [];
-    let line;
-    while ((line = csv.read()) !== null) {
+    /* eslint-disable no-constant-condition */
+    while (true) {
+        const line = csv.read();
+        if (!line) break;
         const
             // Hash all values to make the primary key
             hash = crypto
                 .createHash('md5')
-                .update(line.join(' '))
+                .update(JSON.stringify(line, Object.keys(line).sort()))
                 .digest('hex')
-                .slice(0, 8),
+                .slice(0, 8)
+                .toUpperCase(),
             // Construct the record
-            { [primary_name]: name, ...record } = Object.fromEntries(
-                header.map((key, index) => [key, line[index]])
-            ),
+            { [primary_name]: name, ...record } = line,
             // Format for output
             output = JSON.stringify([name, record]);
         // Warn upon hash collision

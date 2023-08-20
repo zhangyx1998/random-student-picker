@@ -5,10 +5,3 @@ convert:
 	node scripts/convert.js \
 		--primary-name $(NAME_ENT) \
 		--out-dir var/students
-
-convert.demo:
-	cd scripts && npm install
-	node scripts/convert.js \
-		--primary-name $(NAME_ENT) \
-		--out-dir var/students \
-		< demo/students.csv
