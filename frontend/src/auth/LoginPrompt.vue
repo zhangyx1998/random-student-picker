@@ -1,5 +1,5 @@
 <template>
-    <v-form frame-prompt>
+    <div frame-prompt>
         <div class="password-field">
             <input
                 ref="passwordInput"
@@ -34,7 +34,7 @@
                 {{ err?.message ?? err?.toString() ?? "unknown message" }}
             </span>
         </div>
-    </v-form>
+    </div>
 </template>
 
 <script>
@@ -47,7 +47,7 @@ const component = defineComponent({
         watch(password, val => {
             if (err.value?.code === 401 && val.length > 0) err.value = undefined;
         });
-        return { password, err };
+        return { password, err, passwordInput: ref() };
     },
     computed: {
         disabled() {
@@ -56,7 +56,7 @@ const component = defineComponent({
         }
     },
     mounted() {
-        this.$refs.passwordInput.focus();
+        this.passwordInput?.focus();
     },
     methods: {
         async requestLogin() {
