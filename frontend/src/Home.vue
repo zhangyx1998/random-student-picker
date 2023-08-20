@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { alert } from '@win';
-import { viewRecord } from './record/Prompt.vue';
+import { recordWindow } from './record/Window.vue';
 import { createRandomRecord } from '@/api/record';
 const flag_active = ref(false);
 
@@ -11,7 +11,7 @@ async function show(token) {
         location.hash = token;
     }
     // Show RandResult
-    const regenerate = await viewRecord(token, true);
+    const regenerate = await recordWindow(token, true);
     // Clear hash
     location.hash = '';
     // Unset flag_active

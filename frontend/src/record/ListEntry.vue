@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue';
-import { viewRecord } from './Prompt.vue';
+import { recordWindow } from './Window.vue';
 import StudentName from '../student/Name.vue';
 const
     props = defineProps({
@@ -39,7 +39,7 @@ const
     });
 
 async function click() {
-    await viewRecord.title(title.value)(props.token);
+    await recordWindow.title(title.value)(props.token);
     emit('updated');
 }
 </script>

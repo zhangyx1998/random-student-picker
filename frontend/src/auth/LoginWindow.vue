@@ -39,8 +39,7 @@
 
 <script>
 import { defineComponent, ref, watch } from 'vue';
-import { login as loginAPI } from '@/api/app';
-import Win from '@win';
+import { login } from '@/api/app';
 const component = defineComponent({
     setup() {
         const password = ref(''), err = ref(false);
@@ -62,7 +61,7 @@ const component = defineComponent({
         async requestLogin() {
             if (this.disabled) return;
             this.err = undefined;
-            const res = await loginAPI(this.password);
+            const res = await login(this.password);
             if (res === true) {
                 this.RETURN(true);
             } else {
@@ -72,9 +71,9 @@ const component = defineComponent({
         }
     }
 });
-export default component;
-// Export functional API
-export const login = Win(component, 'Login Required', false, {});
+// Export Window Launcher
+import Win from '@win';
+export const loginWindow = Win(component, 'Login Required', false, {});
 </script>
 
 <style scoped lang="scss">

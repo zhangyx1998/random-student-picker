@@ -2,7 +2,7 @@
 import { alert, confirm } from '@win';
 import { logout } from '@/api/app';
 import { auth } from './auth/';
-import { serverLog } from './settings/ServerLog.vue';
+import { serverLogWindow } from './settings/ServerLogWindow.vue';
 async function confirmLogout() {
     const ack = await confirm
         .title('Confirm logout')
@@ -28,7 +28,7 @@ async function confirmLogout() {
         <btn
             type="outlined gray"
             style="color: var(--ct-blue)"
-            @click="serverLog"
+            @click="serverLogWindow"
         >
             Server Log
         </btn>

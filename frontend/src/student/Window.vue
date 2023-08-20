@@ -87,13 +87,13 @@ import { defineComponent, ref } from 'vue';
 import StudentStat from '../student/Stat.vue';
 import StudentName from '../student/Name.vue';
 import StudentMeta from '../student/Meta.vue';
-import { viewRecord } from '../record/Prompt.vue';
+import { recordWindow } from '../record/Window.vue';
 // Utility APIs
 import { alert } from '@win';
 import { createRecord } from '@/api/record';
 import { getStudentInfo } from '@/api/student';
 // Component Export
-const Component = defineComponent({
+const component = defineComponent({
     components: {
         StudentStat, StudentName, StudentMeta
     },
@@ -136,15 +136,15 @@ const Component = defineComponent({
             if (res instanceof Error) {
                 await alert.title('Error')(res);
             } else {
-                await viewRecord.title('New Record')(res);
+                await recordWindow.title('New Record')(res);
             }
             this.refresh();
         }
     }
 });
-export default Component;
-import Window from '@win';
-export const viewStudent = Window(Component, 'Student Information');
+// Export Window Launcher
+import Win from '@win';
+export const studentWindow = Win(component, 'Student Information', true, {});
 </script>
 
 <style lang="scss" scoped>

@@ -1,6 +1,6 @@
 <script setup>
 import Stat from './Stat.vue';
-import { viewStudent } from './Prompt.vue';
+import { studentWindow } from './Window.vue';
 const
     props = defineProps({
         sid: {
@@ -13,14 +13,13 @@ const
         }
     }),
     emit = defineEmits(['updated']);
-
 </script>
 
 <template>
     <btn
         class="student-entry"
         type="seamless gray"
-        @click="viewStudent(sid).then(() => emit('updated'))"
+        @click="studentWindow(sid).then(() => emit('updated'))"
     >
         <span class="name">
             <slot></slot>

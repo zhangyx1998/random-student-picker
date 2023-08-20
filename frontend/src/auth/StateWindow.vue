@@ -11,9 +11,8 @@
 
 <script>
 import { defineComponent, ref, watch } from 'vue';
-import Win from '@win';
 const component = defineComponent({
-    setup(mode = 'SERVER') {
+    setup() {
         const password = ref(''), err = ref(false);
         watch(password, val => {
             if (err.value?.code === 401 && val.length > 0) err.value = undefined;
@@ -21,7 +20,7 @@ const component = defineComponent({
         return { password, err };
     }
 });
-export default component;
-// Export functional API
-export const login = Win(component, 'Login Required', false, {});
+// Export Window Launcher
+import Win from '@win';
+export const authStateWindow = Win(component, 'Application Mode', true, {});
 </script>
