@@ -1,5 +1,6 @@
 demo.convert:
-	$(MAKE) convert < scripts/demo-students.csv
+	@$(MAKE) --no-print-directory \
+	convert < scripts/demo-students.csv
 
 demo.password:
 	@mkdir -p $(SRV_VAR)
