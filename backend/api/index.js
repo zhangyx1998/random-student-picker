@@ -27,4 +27,5 @@ export default express()
     .use(auth(recordServer))
     .use(auth(studentServer))
     // Unmatched routes are redirected to static assets.
-    .use(express.static(env.path.static, { pwa: true }));
+    .use(express.static(env.path.static))
+    .use((req, res) => res.sendFile(`${env.path.static}/index.html`));
