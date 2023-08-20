@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite",
-    "build": "vite build --outDir ../var/dist"
+    "build": "vite build --emptyOutDir --outDir ../var/static"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^4.2.3",

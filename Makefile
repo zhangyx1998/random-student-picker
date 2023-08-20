@@ -22,6 +22,10 @@ help:
 	"\n  backend.start    start backend service (systemd)" \
 	"\n  backend.stop     stop backend service (systemd)" \
 	"\n" \
+	"\n  convert          Convert csv file into student list." \
+	"\n                   (This command takes input from stdin)" \
+	"\n  convert.demo     Convert demo/students.csv for demostration." \
+	"\n" \
 	"\n  Author: Yuxuan Zhang" \
 	"\n"
 
@@ -29,6 +33,7 @@ preview: frontend backend
 
 # Frontend Related
 frontend.init:
+	@git submodule update --init --recursive > /dev/null
 	@cd frontend && npm install > /dev/null
 
 frontend.dev: frontend.init
@@ -40,7 +45,8 @@ frontend: frontend.init
 	$(info Building frontend distribution...)
 	@cd frontend && \
 	npx vite build \
-	--outDir $(SERVER_VAR)/static > /dev/null
+	--emptyOutDir \
+	--outDir $(SERVER_VAR)/static > /dev/null 
 
 # Backend Related
 backend.init:
