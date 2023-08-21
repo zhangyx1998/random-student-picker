@@ -2,10 +2,12 @@ import { ref, watch } from 'vue';
 import Win, { alert } from '@win';
 import AuthManager from './AuthManager.vue';
 import LoginWindow from './LoginWindow.vue';
+import StateWindow from './StateWindow.vue';
 
 export const
     auth = ref(undefined),
-    loginWindow = Win(LoginWindow, 'Login Required', false, {});
+    loginWindow = Win(LoginWindow, 'Login Required', false, {}),
+    stateWindow = Win(StateWindow, 'Application Mode', true, {});
 
 watch(auth, async (val, prev) => {
     if (val instanceof Error) {

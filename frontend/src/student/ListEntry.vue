@@ -1,6 +1,6 @@
 <script setup>
 import Stat from './Stat.vue';
-import { studentWindow } from './Window.vue';
+import { studentWindow } from '.';
 const
     props = defineProps({
         sid: {

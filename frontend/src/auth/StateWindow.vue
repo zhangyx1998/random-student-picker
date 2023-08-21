@@ -11,7 +11,7 @@
 
 <script>
 import { defineComponent, ref, watch } from 'vue';
-const component = defineComponent({
+export default defineComponent({
     setup() {
         const password = ref(''), err = ref(false);
         watch(password, val => {
@@ -20,7 +20,4 @@ const component = defineComponent({
         return { password, err };
     }
 });
-// Export Window Launcher
-import Win from '@win';
-export const authStateWindow = Win(component, 'Application Mode', true, {});
 </script>

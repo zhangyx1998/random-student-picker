@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue';
-import { recordWindow } from './Window.vue';
+import { recordWindow } from '.';
 import StudentName from '../student/Name.vue';
 const
     props = defineProps({

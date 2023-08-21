@@ -87,13 +87,13 @@ import { defineComponent, ref } from 'vue';
 import StudentStat from '../student/Stat.vue';
 import StudentName from '../student/Name.vue';
 import StudentMeta from '../student/Meta.vue';
-import { recordWindow } from '../record/Window.vue';
+import { recordWindow } from '../record';
 // Utility APIs
 import { alert } from '@win';
 import { createRecord } from '@/api/record';
 import { getStudentInfo } from '@/api/student';
 // Component Export
-const component = defineComponent({
+export default defineComponent({
     components: {
         StudentStat, StudentName, StudentMeta
     },
@@ -142,9 +142,6 @@ const component = defineComponent({
         }
     }
 });
-// Export Window Launcher
-import Win from '@win';
-export const studentWindow = Win(component, 'Student Information', true, {});
 </script>
 
 <style lang="scss" scoped>

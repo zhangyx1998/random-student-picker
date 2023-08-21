@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { alert } from '@win';
-import { recordWindow } from './record/Window.vue';
+import { recordWindow } from './record';
 import { createRandomRecord } from '@/api/record';
 const flag_active = ref(false);
 

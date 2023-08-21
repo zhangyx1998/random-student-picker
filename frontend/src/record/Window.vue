@@ -186,11 +186,11 @@ import StudentMeta from '../student/Meta.vue';
 // Common Utilities
 import Timeout from '@CL/timeout';
 // Utility APIs
-import Win, { alert, confirm } from '@win';
+import { alert, confirm } from '@win';
 import { getRecord, updateRecord, deleteRecord } from '@/api/record';
 import { getStudentInfo } from '@/api/student';
 // Component
-const component = defineComponent({
+export default defineComponent({
     components: {
         StudentStat, StudentName, StudentMeta
     },
@@ -275,7 +275,6 @@ const component = defineComponent({
         }
     }
 });
-export const recordWindow = Win(component, 'Random Result');
 </script>
 
 <style lang="scss" scoped>

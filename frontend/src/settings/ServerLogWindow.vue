@@ -150,7 +150,7 @@ watch(wsAlive, (alive, prev) => {
 // Start infinite connect-retry loop
 connectWS();
 // Create log viewer frame component
-const component = defineComponent({
+export default defineComponent({
     setup() {
         return {
             wsAlive,
@@ -178,9 +178,6 @@ const component = defineComponent({
         }
     }
 });
-// Export Window Launcher
-import Win from '@win';
-export const serverLogWindow = Win(component, 'Server Log', true, {});
 </script>
 
 <style lang="scss" scoped>

@@ -2,7 +2,7 @@
 import { alert, confirm } from '@win';
 import { logout } from '@/api/app';
 import { auth } from './auth/';
-import { serverLogWindow } from './settings/ServerLogWindow.vue';
+import { serverLogWindow } from './settings';
 async function confirmLogout() {
     const ack = await confirm
         .title('Confirm logout')
