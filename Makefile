@@ -2,6 +2,7 @@
 # Author: Yuxuan Zhang, admin@yuxuanzhang.net
 # =========================================================
 # Makefile: https://www.gnu.org/software/make/manual/make.html
+MAKE := $(MAKE) --no-print-directory
 # Preset parameters
 SRV_PORT ?= 8080
 SRV_VAR  ?= $(PWD)/var
@@ -60,7 +61,7 @@ frontend.dev: frontend.init
 	npx vite dev
 
 # Backend Related
-backend.init:
+backend.init: password
 	@cd backend && npm install > /dev/null
 
 # Install backend server as a systemd service
