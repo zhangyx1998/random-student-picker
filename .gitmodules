@@ -1,4 +1,4 @@
 [submodule "frontend/common"]
 	path = frontend/common
-	url = git@github.com:zhangyx1998/frontend-framework.git
+	url = https://github.com/zhangyx1998/frontend-framework.git
 	branch = master
